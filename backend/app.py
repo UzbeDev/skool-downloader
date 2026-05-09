@@ -52,12 +52,24 @@ def is_valid_url(url):
 # ═══════════════════════════════════════════════
 # Server-Side Cookie Management
 # ═══════════════════════════════════════════════
-# Cookies are stored in backend/cookies.txt (Netscape format).
-# The admin copies this file to the server — no user upload needed.
-# To generate cookies.txt from Chrome:
+# Cookies are loaded from backend/cookies.txt (Netscape format).
+# On Render, set the COOKIES_DATA env var with the full cookies.txt content.
+# The app writes it to disk on startup for Playwright and yt-dlp to use.
+#
+# To generate cookies from Chrome:
 #   1. Install "Get cookies.txt" extension
 #   2. Log into Skool, export cookies as Netscape format
-#   3. Save as backend/cookies.txt
+#   3. Copy the content into Render's COOKIES_DATA env var
+
+# On startup, write COOKIES_DATA env var to disk if set
+_cookies_env = os.environ.get('COOKIES_DATA', '').strip()
+if _cookies_env:
+    try:
+        with open(COOKIE_PATH, 'w', encoding='utf-8') as f:
+            f.write(_cookies_env)
+        print(f'[skool] Cookies written from COOKIES_DATA env var ({len(_cookies_env)} bytes)', file=sys.stderr)
+    except Exception as e:
+        print(f'[skool] Failed to write COOKIES_DATA: {e}', file=sys.stderr)
 
 def get_cookie_path():
     return COOKIE_PATH if os.path.exists(COOKIE_PATH) else None
@@ -548,6 +560,7 @@ def health_check():
         'version': '3.0.0',
         'active_tasks': len(download_tasks),
         'has_cookies': get_cookie_path() is not None,
+        'cookies_source': 'env_var' if _cookies_env else ('file' if get_cookie_path() else 'none'),
     })
 
 
