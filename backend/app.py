@@ -596,7 +596,14 @@ if __name__ == '__main__':
     debug = os.environ.get('FLASK_ENV', 'development').lower() == 'development'
     app.run(host='0.0.0.0', port=port, debug=debug)
     
+# Near the top where you define folders
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# IMPORTANT: Use absolute path for Render
+STATIC_FOLDER = os.path.join(os.path.dirname(BASE_DIR), 'frontend')
+
+app = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='')
+
 @app.route('/ads.txt')
 def serve_ads_txt():
-    # This serves the ads.txt file from your backend folder
-    return send_from_directory(os.path.abspath(os.path.dirname(__file__)), 'ads.txt')
+    # This ensures Render finds the file even inside a Docker container
+    return send_from_directory(BASE_DIR, 'ads.txt')
