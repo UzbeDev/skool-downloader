@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skool Downloader Pro — Local Session Access</title>
+  <meta name="description" content="Download Skool-hosted videos using your live browser session. No cookie upload needed." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="bg-ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-pattern"></div>
+  </div>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a class="nav-logo" href="/">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="url(#logoGrad)"/>
+          <path d="M12 20L18 26L28 14" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40">
+              <stop stop-color="#7C3AED"/><stop offset="1" stop-color="#3B82F6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="logo-text">Skool<span class="logo-accent">Pro</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#" class="nav-link active">Home</a>
+        <a href="#" class="nav-link" id="contactNav">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <section class="hero" id="heroSection">
+      <div class="hero-glow"></div>
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        v3.0 Pro &mdash; Server Edition
+      </div>
+      <h1 class="hero-title" id="heroTitle">
+        Skool <span class="gradient-text">Downloader</span>
+        <span class="hero-title-line">Professional</span>
+      </h1>
+      <p class="hero-subtitle">
+        Download Skool-hosted videos instantly.<br />
+        No login, no cookie upload &mdash; just paste a URL and download.
+      </p>
+
+      <div class="download-card" id="downloadCard">
+        <div class="input-wrapper" id="inputWrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          <input type="url" id="videoUrl" placeholder="Paste your Skool video URL here..." autocomplete="off" spellcheck="false" />
+          <button class="input-clear" id="inputClear" aria-label="Clear input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="url-hint" id="urlHint">Paste a Skool.com video URL to get started</div>
+
+        <div class="btn-row">
+          <button id="downloadBtn" class="download-btn" disabled>
+            <span class="btn-text">Download Video</span>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </button>
+          <button class="help-btn" id="helpBtn" type="button" aria-label="Help" title="How it works">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Help Modal -->
+      <div class="help-overlay" id="helpOverlay">
+        <div class="help-modal">
+          <button class="help-close" id="helpClose" aria-label="Close help">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+          <h2 class="help-title">How It Works</h2>
+          <div class="help-steps">
+            <div class="help-step">
+              <div class="help-step-num">1</div>
+              <div class="help-step-body">
+                <h4>Get the Skool video URL</h4>
+                <p>Navigate to any Skool classroom video page and copy the URL from your browser.</p>
+              </div>
+            </div>
+            <div class="help-step">
+              <div class="help-step-num">2</div>
+              <div class="help-step-body">
+                <h4>Paste it here</h4>
+                <p>Paste the URL into the input field above. The server will analyze the page.</p>
+              </div>
+            </div>
+            <div class="help-step">
+              <div class="help-step-num">3</div>
+              <div class="help-step-body">
+                <h4>Click Download</h4>
+                <p>The server extracts and downloads the video. No account or cookie upload needed.</p>
+              </div>
+            </div>
+          </div>
+          <div class="help-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>This is a public server. Videos are processed server-side and deleted after 1 hour.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-overlay" id="contactOverlay">
+        <div class="contact-modal">
+          <button class="help-close" id="contactClose" aria-label="Close contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+          <h2 class="help-title">Contact</h2>
+          <div class="contact-links">
+            <a href="mailto:uzbedev@gmail.com" class="contact-item" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>uzbedev@gmail.com</span>
+            </a>
+            <a href="https://t.me/uzbedev" class="contact-item" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.5 2.5L2.5 10.5l7 3 3 7 9-18z"/><path d="M12.5 13.5l5-5"/></svg>
+              <span>@uzbedev</span>
+            </a>
+            <a href="https://github.com/uzbedev" class="contact-item" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              <span>github.com/uzbedev</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+          </div>
+          <h3>Server Powered</h3>
+          <p>Headless browser extracts videos server-side automatically</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3>No Login Needed</h3>
+          <p>No account or cookie upload required from you</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>Fast &amp; Secure</h3>
+          <p>Direct downloads with no ffmpeg required</p>
+        </div>
+      </div>
+
+      <footer class="hero-footer">
+        <p>Developed by <a href="https://uzbedev.vercel.app" target="_blank" rel="noopener" class="footer-link">uzbedev</a> &copy; 2026</p>
+      </footer>
+    </section>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-container">
+        <div class="loading-ring">
+          <div class="ring-spinner">
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#7C3AED"/>
+                  <stop offset="50%" stop-color="#3B82F6"/>
+                  <stop offset="100%" stop-color="#06B6D4"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+              <circle class="ring-fill" cx="100" cy="100" r="85" fill="none" stroke="url(#ringGrad)" stroke-width="6" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+            </svg>
+          </div>
+          <div class="ring-center">
+            <div class="ring-pulse"></div>
+            <svg class="ring-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+        </div>
+        <h2 class="loading-title" id="loadingTitle">Preparing secure download...</h2>
+        <p class="loading-subtitle" id="loadingSubtitle">Extracting session cookies from browser</p>
+        <div class="loading-progress-bar">
+          <div class="loading-progress-fill" id="progressFill"></div>
+        </div>
+        <div class="loading-info">
+          <span id="loadingTime">Estimated time: 6s</span>
+          <span id="loadingPercent">0%</span>
+        </div>
+        <div class="loading-steps" id="loadingSteps">
+          <div class="step" data-step="1"><span class="step-dot"></span>Read session</div>
+          <div class="step" data-step="2"><span class="step-dot"></span>Extract streams</div>
+          <div class="step" data-step="3"><span class="step-dot"></span>Download media</div>
+          <div class="step" data-step="4"><span class="step-dot"></span>Finalize file</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="notification" id="notification">
+    <div class="notif-icon" id="notifIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <div class="notif-content">
+      <p class="notif-title" id="notifTitle">Success</p>
+      <p class="notif-message" id="notifMessage">Download completed successfully</p>
+    </div>
+    <button class="notif-close" id="notifClose" aria-label="Close notification">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
