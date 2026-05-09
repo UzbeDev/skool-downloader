@@ -595,3 +595,8 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV', 'development').lower() == 'development'
     app.run(host='0.0.0.0', port=port, debug=debug)
+    
+@app.route('/ads.txt')
+def serve_ads_txt():
+    # This serves the ads.txt file from your backend folder
+    return send_from_directory(os.path.abspath(os.path.dirname(__file__)), 'ads.txt')
