@@ -8,7 +8,7 @@ import traceback
 import requests
 import yt_dlp
 from urllib.parse import urljoin
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_file, send_from_directory, Response, stream_with_context
 from flask_cors import CORS
 
 # ── Optional: Playwright for JavaScript-rendered pages ──
@@ -385,14 +385,15 @@ class DownloadTask:
         cookie_path = get_cookie_path()
 
         base_ydl_opts = {
-            'format': 'best',
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             'outtmpl': output_template,
             'merge_output_format': 'mp4',
             'progress_hooks': [self._progress_hook],
-            'verbose': True,
-            'quiet': False,
-            'no_warnings': False,
-            'extract_flat': False,
+            'noplaylist': True,
+            'quiet': True,
+            'buffersize': 1024 * 1024,
+            'http_chunk_size': 10485760,
+            'nocheckcertificate': True,
         }
 
         if cookie_path:
@@ -538,18 +539,18 @@ def get_download_status(task_id):
 @app.route('/api/download/<task_id>/file', methods=['GET'])
 def download_file(task_id):
     task = download_tasks.get(task_id)
-    if not task:
-        return jsonify({'error': 'Task not found'}), 404
-    if task.status != 'completed':
-        return jsonify({'error': 'Download not yet completed'}), 400
-    if not task.filepath or not os.path.exists(task.filepath):
-        return jsonify({'error': 'File not found on server'}), 404
-    download_name = task.filename or 'skool_video.mp4'
-    return send_file(
-        task.filepath,
-        as_attachment=True,
-        download_name=download_name,
+    if not task or task.status != 'completed':
+        return jsonify({'error': 'File not ready'}), 404
+
+    def generate():
+        with open(task.filepath, "rb") as f:
+            while chunk := f.read(1024 * 512):
+                yield chunk
+
+    return Response(
+        stream_with_context(generate()),
         mimetype='video/mp4',
+        headers={"Content-Disposition": f"attachment; filename={task.filename}"}
     )
 
 
@@ -596,14 +597,6 @@ if __name__ == '__main__':
     debug = os.environ.get('FLASK_ENV', 'development').lower() == 'development'
     app.run(host='0.0.0.0', port=port, debug=debug)
     
-# Near the top where you define folders
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# IMPORTANT: Use absolute path for Render
-STATIC_FOLDER = os.path.join(os.path.dirname(BASE_DIR), 'frontend')
-
-app = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='')
-
 @app.route('/ads.txt')
 def serve_ads_txt():
-    # This ensures Render finds the file even inside a Docker container
-    return send_from_directory(BASE_DIR, 'ads.txt')
+    return send_from_directory(os.path.dirname(os.path.abspath(__file__)), 'ads.txt')

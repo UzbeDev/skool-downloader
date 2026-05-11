@@ -14,6 +14,14 @@
     ],
     POLL_INTERVAL: 1000,
     NOTIF_DURATION: 5000,
+    PRELOADER_MIN_MS: 3500,
+    PRELOADER_HINTS: [
+      'Initializing secure connection',
+      'Loading interface assets',
+      'Establishing ad delivery',
+      'Optimizing your experience',
+      'Almost ready',
+    ],
   };
 
   // ===== State =====
@@ -23,6 +31,11 @@
     pollingTimer: null,
     isDownloading: false,
     countdownStart: 0,
+    cursorX: 0,
+    cursorY: 0,
+    ringX: 0,
+    ringY: 0,
+    cursorRAF: null,
   };
 
   // ===== DOM References =====
@@ -60,6 +73,13 @@
     dom.notifTitle = $('#notifTitle');
     dom.notifMessage = $('#notifMessage');
     dom.notifClose = $('#notifClose');
+
+    dom.cursorDot = $('#cursorDot');
+    dom.cursorRing = $('#cursorRing');
+    dom.preloader = $('#preloader');
+    dom.preloaderBar = $('#preloaderBar');
+    dom.preloaderHint = $('#preloaderHint');
+    dom.appWrapper = $('#appWrapper');
   }
 
   // ===== URL Validation =====
@@ -423,15 +443,96 @@
     });
   }
 
+  // ===== Custom Cursor =====
+  function initCursor() {
+    function onMouseMove(e) {
+      state.cursorX = e.clientX;
+      state.cursorY = e.clientY;
+      dom.cursorDot.style.transform = 'translate(' + state.cursorX + 'px, ' + state.cursorY + 'px) translate(-50%, -50%)';
+      dom.cursorDot.classList.add('visible');
+      dom.cursorRing.classList.add('visible');
+    }
+
+    function animateRing() {
+      state.ringX += (state.cursorX - state.ringX) * 0.18;
+      state.ringY += (state.cursorY - state.ringY) * 0.18;
+      dom.cursorRing.style.transform = 'translate(' + state.ringX + 'px, ' + state.ringY + 'px) translate(-50%, -50%)';
+      state.cursorRAF = requestAnimationFrame(animateRing);
+    }
+
+    document.addEventListener('mousemove', onMouseMove, { passive: true });
+    animateRing();
+
+    document.addEventListener('mouseleave', function () {
+      dom.cursorDot.classList.remove('visible');
+      dom.cursorRing.classList.remove('visible');
+    });
+
+    document.addEventListener('mouseenter', function () {
+      if (state.cursorX > 0 || state.cursorY > 0) {
+        dom.cursorDot.classList.add('visible');
+        dom.cursorRing.classList.add('visible');
+      }
+    });
+
+    $$('a, button, input, textarea, select, [role="button"], .clickable').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { dom.cursorRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function () { dom.cursorRing.classList.remove('hover'); });
+    });
+  }
+
+  // ===== Pre-Loader =====
+  function dismissPreloader() {
+    dom.preloaderBar.style.width = '100%';
+    dom.preloaderHint.textContent = 'Ready!';
+
+    setTimeout(function () {
+      dom.preloader.classList.add('hidden');
+      dom.appWrapper.classList.add('visible');
+      document.body.style.background = '';
+      if (!dom.videoUrl.value.trim()) {
+        dom.videoUrl.focus();
+      }
+    }, 600);
+  }
+
   // ===== Init =====
   function init() {
     cacheDom();
     bindEvents();
     updateButtonState();
     initAnimations();
+    initCursor();
 
-    if (!dom.videoUrl.value.trim()) {
-      dom.videoUrl.focus();
+    var preloaderStart = Date.now();
+    var hintIndex = 0;
+
+    var hintTimer = setInterval(function () {
+      hintIndex = (hintIndex + 1) % CONFIG.PRELOADER_HINTS.length;
+      dom.preloaderHint.textContent = CONFIG.PRELOADER_HINTS[hintIndex];
+      dom.preloaderBar.style.width = Math.min(30 + (hintIndex / CONFIG.PRELOADER_HINTS.length) * 50, 80) + '%';
+    }, 800);
+
+    function onReady() {
+      var elapsed = Date.now() - preloaderStart;
+      var remaining = Math.max(0, CONFIG.PRELOADER_MIN_MS - elapsed);
+
+      clearInterval(hintTimer);
+
+      setTimeout(function () {
+        dom.preloaderHint.textContent = 'Finalizing...';
+        dom.preloaderBar.style.width = '90%';
+
+        setTimeout(function () {
+          dismissPreloader();
+        }, 400);
+      }, remaining);
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(onReady, 200);
+    } else {
+      window.addEventListener('load', onReady);
     }
   }
 

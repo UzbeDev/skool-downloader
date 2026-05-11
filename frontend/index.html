@@ -7,7 +7,7 @@
   <meta name="kadam-verification" content="kadam360821147dbe8173abf826cfe3260db9" />
   <meta name="google-adsense-account" content="ca-pub-4911295908443347">
   
-  <title>Skool Downloader Pro — Local Session Access</title>
+  <title>FREE Skool Downloader Pro</title>
   <meta name="description"
     content="Download Skool-hosted videos using your live browser session. No cookie upload needed." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,11 +16,33 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4911295908443347"
     crossorigin="anonymous"></script>
 </head>
 
 <body>
+
+  <!-- Pre-Loader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-inner">
+      <lottie-player class="preloader-lottie" src="loading.json" background="transparent" speed="1.2" loop autoplay></lottie-player>
+      <div class="preloader-text">
+        <span class="preloader-label">Loading</span>
+        <span class="preloader-dots"><span>.</span><span>.</span><span>.</span></span>
+      </div>
+      <div class="preloader-track">
+        <div class="preloader-bar" id="preloaderBar"></div>
+      </div>
+      <p class="preloader-hint" id="preloaderHint">Initializing secure connection</p>
+    </div>
+  </div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <div class="app-wrapper" id="appWrapper">
 
   <div class="bg-ambient">
     <div class="orb orb-1"></div>
@@ -359,6 +381,8 @@
         adexiumWidget.autoMode();
     });
 </script>
+</div><!-- /app-wrapper -->
+
 </body>
 
 </html>
